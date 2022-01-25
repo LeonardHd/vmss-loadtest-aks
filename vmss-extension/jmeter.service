@@ -1,0 +1,10 @@
+[Unit]
+Description=Jmeter Server
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /usr/bin/run_jmeter_server.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

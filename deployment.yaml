@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo-app
+spec:
+  selector:
+    matchLabels:
+      app: echo-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: echo-app
+    spec:
+      containers:
+      - name: echo-app
+        image: mcr.microsoft.com/azuredocs/aci-helloworld
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        ports:
+        - containerPort: 80
+        env:
+        - name: PORT
+          value: "80"
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 200m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo-service
+  labels:
+    service: echo-service
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: echo-app
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo-service-lb
+  labels:
+    service: echo-service-lb
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: echo-app
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: echo-app-service-hpa
+spec:
+  maxReplicas: 400 # define max replica count
+  minReplicas: 10  # define min replica count
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: echo-app
+  targetCPUUtilizationPercentage: 50 # target CPU utilization
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: echo-ingress
+  annotations:
+    kubernetes.io/ingress.class: azure/application-gateway
+    appgw.ingress.kubernetes.io/use-private-ip: "true"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /*
+        backend:
+          service:
+            name: echo-service
+            port:
+              number: 80
+        pathType: Exact
