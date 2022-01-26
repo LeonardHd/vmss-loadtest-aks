@@ -4,7 +4,9 @@ export JMETER_VERSION=5.2.1
 export JMETER_HOME="/jmeter/apache-jmeter-$JMETER_VERSION/"
 export PATH=$JMETER_HOME/bin:$PATH
 
-sudo apt-get clean && sudo apt-get update -qy && sudo apt install openjdk-17-jdk wget unzip -qy
+sudo apt clean && sudo apt update -qy && sudo apt install ca-certificates-java -qy
+sudo dpkg --force-depends --configure ca-certificates-java
+sudo apt clean && sudo apt update -qy && sudo apt install openjdk-17-jre-headless wget unzip -qy
 sudo mkdir /jmeter 
 sudo chmod 777 /jmeter
 

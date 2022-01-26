@@ -1,5 +1,7 @@
+# Jmeter Loadtesting for AKS-based Applications
+
 ```bash
-prefix='apim3'
+prefix="applt$RANDOM"
 rg="$prefix-sut"
 aksName="$prefix-sutaks"
 agwname="$prefix-sutagw"
@@ -81,13 +83,30 @@ az network vnet peering create -g $rg --name akspeering --vnet-name $vnetname --
 
 az vm create -n masterwindows -g $rgLoadTest --image MicrosoftWindowsDesktop:Windows-10:win10-21h2-pro:latest --vnet-name $vnetnameLoadTest --subnet default --public-ip-sku Standard --admin-username loadtest
 
+az vm run-command invoke  --command-id RunPowerShellScript --name masterwindows -g $rgLoadTest --scripts @win-extension/setup.ps1
+
 az vmss create \
   --resource-group $rgLoadTest \
-  --name slaveVms \
+  --name workerVms \
   --image UbuntuLTS \
   --upgrade-policy-mode automatic \
-  --admin-username azureuser \
+  --admin-username loadtest \
   --vnet-name $vnetnameLoadTest \
   --subnet default
+
+az vmss extension set \
+  --publisher Microsoft.Azure.Extensions \
+  --version 2.0 \
+  --name CustomScript \
+  --resource-group $rgLoadTest \
+  --vmss-name workerVms \
+  --settings '{"fileUris":["https://raw.githubusercontent.com/LeonardHd/vmss-loadtest-aks/main/vmss-extension/jmeter.service", "https://raw.githubusercontent.com/LeonardHd/vmss-loadtest-aks/main/vmss-extension/run.sh", "https://raw.githubusercontent.com/LeonardHd/vmss-loadtest-aks/main/vmss-extension/setup.sh"],"commandToExecute":"/bin/bash setup.sh"}'
+```
+
+## APIM Integration
+
+```bash
+
+# TODO
 
 ```
