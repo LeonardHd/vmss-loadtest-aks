@@ -6,20 +6,5 @@ msiexec.exe /q /i `
 
 $JMETER_VERSION="5.2.1"
 Invoke-WebRequest -Uri "https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-$JMETER_VERSION.zip" -OutFile jmeter.zip
-Expand-Archive -Path jmeter.zip
+Expand-Archive -Path jmeter.zip -DestinationPath "C:\Program Files\jmeter" -Force
 
-# Create Jmeter Config
-$SourceFilePath = "$( (Get-Item .).FullName)/jmeter/apache-jmeter-$JMETER_VERSION/bin/jmeter.properties"
-$ShortcutPath = "C:\Users\loadtest\Desktop\JMeterConfig.lnk"
-$WScriptObj = New-Object -ComObject ("WScript.Shell")
-$shortcut = $WscriptObj.CreateShortcut($ShortcutPath)
-$shortcut.TargetPath = $SourceFilePath
-$shortcut.Save()
-
-# Create Jmeter Shortcut
-$SourceFilePath = "$( (Get-Item .).FullName)/jmeter/apache-jmeter-$JMETER_VERSION/bin/jmeter.bat"
-$ShortcutPath = "C:\Users\loadtest\Desktop\JMeter.lnk"
-$WScriptObj = New-Object -ComObject ("WScript.Shell")
-$shortcut = $WscriptObj.CreateShortcut($ShortcutPath)
-$shortcut.TargetPath = $SourceFilePath
-$shortcut.Save()
