@@ -8,3 +8,16 @@ $JMETER_VERSION="5.2.1"
 Invoke-WebRequest -Uri "https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-$JMETER_VERSION.zip" -OutFile jmeter.zip
 Expand-Archive -Path jmeter.zip -DestinationPath "C:\Program Files\jmeter" -Force
 
+$TargetFile = "C:\Program Files\jmeter\apache-jmeter-$JMETER_VERSION\bin\jmeter.bat"
+$ShortcutFile = "$env:Public\Desktop\JMeter GUI.lnk"
+$WScriptShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WScriptShell.CreateShortcut($ShortcutFile)
+$Shortcut.TargetPath = $TargetFile
+$Shortcut.Save()
+
+$TargetFile = "C:\Program Files\jmeter\apache-jmeter-$JMETER_VERSION\bin\jmeter.properties"
+$ShortcutFile = "$env:Public\Desktop\JMeter Properties.lnk"
+$WScriptShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WScriptShell.CreateShortcut($ShortcutFile)
+$Shortcut.TargetPath = $TargetFile
+$Shortcut.Save()
